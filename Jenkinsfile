@@ -5,7 +5,7 @@ pipeline {
         TOMCAT_URL = 'http://localhost:8085'
         TOMCAT_USERNAME = 'admin'
         TOMCAT_PASSWORD = 'root'
-        GITHUB_REPO = 'your-github-repo-url'
+        GITHUB_REPO = 'https://github.com/Pradeep-majji/jenkins-ci-angular.git'
     }
 
     stages {

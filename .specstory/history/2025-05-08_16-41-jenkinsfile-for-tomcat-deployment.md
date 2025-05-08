@@ -361,3 +361,78 @@ Would you like me to help you troubleshoot if you're having trouble accessing th
 
 ---
 
+_**User**_
+
+based on this generate the war file in jenkins and update the war file into my tomcat
+
+---
+
+_**Assistant**_
+
+I notice from your `angular.json` that your application's base href is set to `/tgg-app/`. Let me modify the Jenkinsfile to properly build and deploy your Angular application to Tomcat with the correct context path.
+
+
+---
+
+```diff
+              steps {
+                  bat 'npm install'
+-                 bat 'npm run build'
++                 bat 'npm run build -- --configuration=production'
++             }
++         }
++ 
++         stage('Create WAR') {
++             steps {
++                 bat '''
++                     cd dist/tgg-app
++                     jar -cvf ../../tgg-app.war *
++                 '''
+              }
+          }
+```
+
+```diff
+              steps {
+                  bat '''
+-                     # Create WAR file
+-                     jar -cvf app.war -C dist .
+- 
+-                     # Deploy to Tomcat using curl
+-                     curl -T app.war "http://%TOMCAT_USERNAME%:%TOMCAT_PASSWORD%@localhost:8085/manager/text/deploy?path=/app&update=true"
++                     curl -T tgg-app.war "http://%TOMCAT_USERNAME%:%TOMCAT_PASSWORD%@localhost:8085/manager/text/deploy?path=/tgg-app&update=true"
+                  '''
+              }
+```
+
+---
+
+I've made several important changes to the Jenkinsfile:
+
+1. **Build Stage**:
+   - Added `--configuration=production` to ensure we're building the production version
+   - This will use the production configuration from your `angular.json`
+
+2. **New Create WAR Stage**:
+   - Added a separate stage for creating the WAR file
+   - Changes directory to `dist/tgg-app` where the built files are located
+   - Creates a WAR file named `tgg-app.war` with all the built files
+
+3. **Deploy Stage**:
+   - Updated the deployment path to `/tgg-app` to match your Angular application's base href
+   - Uses the correct WAR file name `tgg-app.war`
+
+After this pipeline runs successfully, you can access your application at:
+```
+http://localhost:8085/tgg-app
+```
+
+To verify the deployment:
+1. Check the Tomcat Manager at `http://localhost:8085/manager/html`
+2. Look for the application named "tgg-app" in the list
+3. Check the Tomcat logs if there are any issues
+
+If you encounter any issues, please let me know and I'll help you troubleshoot them. Would you like me to make any adjustments to the pipeline?
+
+---
+

@@ -18,18 +18,23 @@ pipeline {
         stage('Build') {
             steps {
                 bat 'npm install'
-                bat 'npm run build'
+                bat 'npm run build -- --configuration=production'
+            }
+        }
+
+        stage('Create WAR') {
+            steps {
+                bat '''
+                    cd dist/tgg-app
+                    jar -cvf ../../tgg-app.war *
+                '''
             }
         }
 
         stage('Deploy to Tomcat') {
             steps {
                 bat '''
-                    # Create WAR file
-                    jar -cvf app.war -C dist .
-
-                    # Deploy to Tomcat using curl
-                    curl -T app.war "http://%TOMCAT_USERNAME%:%TOMCAT_PASSWORD%@localhost:8085/manager/text/deploy?path=/app&update=true"
+                    curl -T tgg-app.war "http://%TOMCAT_USERNAME%:%TOMCAT_PASSWORD%@localhost:8085/manager/text/deploy?path=/tgg-app&update=true"
                 '''
             }
         }

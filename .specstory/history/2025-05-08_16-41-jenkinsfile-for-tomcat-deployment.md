@@ -309,7 +309,55 @@ Before running the pipeline again, please ensure:
 
 1. Node.js and npm are installed on your Jenkins server
 2. The `jar` command is available in your system PATH
-3. `c
+3. `curl` is installed on your Windows system
+4. The Tomcat manager application is properly configured with the credentials you've specified
+
+If you encounter any other issues, please let me know and I'll help you resolve them. Would you like me to make any additional adjustments to the pipeline?
+
+---
+
+_**User**_
+
+in tomcat where i can see the application
+
+---
+
+_**Assistant**_
+
+After deploying your application to Tomcat, you can access it in a few ways:
+
+1. **Main Application URL**:
+   - Since your application is deployed with the context path `/app`, you can access it at:
+   ```
+   http://localhost:8085/app
+   ```
+
+2. **Tomcat Manager**:
+   - You can view and manage your deployed applications through the Tomcat Manager interface at:
+   ```
+   http://localhost:8085/manager/html
+   ```
+   - Login with the credentials you configured (username: `admin`, password: `root`)
+   - In the manager interface, you'll see a list of all deployed applications
+   - Your application should be listed as "app" in the applications list
+   - You can start, stop, reload, or undeploy the application from here
+
+3. **Physical Location**:
+   - The deployed application files are physically located in:
+   ```
+   C:\Program Files\Apache Software Foundation\Tomcat 9.0\webapps\app
+   ```
+   (The exact path might vary depending on your Tomcat installation directory)
+
+If you can't access the application, please check:
+1. Is Tomcat running? You can verify by accessing `http://localhost:8085`
+2. Is the application deployed successfully? Check the Tomcat logs in:
+   ```
+   C:\Program Files\Apache Software Foundation\Tomcat 9.0\logs\catalina.out
+   ```
+3. Are there any errors in the Jenkins build console output?
+
+Would you like me to help you troubleshoot if you're having trouble accessing the application?
 
 ---
 

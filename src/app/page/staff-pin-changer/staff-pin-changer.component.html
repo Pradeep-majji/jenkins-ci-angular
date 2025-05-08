@@ -1,0 +1,100 @@
+<div class="main-page">
+  <div class="pin-changer-container">
+    <div class="logo-box">
+      <img src="assets/image.jpg" alt="JB HI-FI Logo" class="jb-logo">
+    </div>
+    <h1>STAFF PIN CHANGER : {{ currentDate | date: 'd_MMMM_y' }}</h1>
+    <form [formGroup]="pinChangeForm" class="pin-changer-form">
+
+      <div class="form-group">
+        <label for="staffSelect">Choose Staff</label>
+        <div class="select-container">
+          @if (isLoading) {
+            <div class="loading-spinner">Loading staff list...</div>
+          } @else if (errorMessage) {
+            <div class="error-message">{{errorMessage}}</div>
+          } @else {
+            <select id="staffSelect" formControlName="selectedStaff">
+              <option value="" selected>Select staff</option>
+              @for (staff of staffList; track staff.empId) {
+                <option [value]="staff.empId">{{getFullName(staff)}}</option>
+              }
+            </select>
+          }
+        </div>
+        <div class="staff-id">{{getSelectedStaffId()}}</div>
+      </div>
+
+      <div class="form-group" style="margin-top: -21px;">
+        <label for="newPin">Enter New Staff PIN</label>
+        <div class="input-container">
+          <input type="number"
+                 id="newPin"
+                 formControlName="newPin"
+                 [maxlength]="getSelectedStaffLevel() >= 3 ? 5 : 4"
+                 [class.error]="pinChangeForm.get('newPin')?.invalid && pinChangeForm.get('newPin')?.touched"
+                 >
+          <div class="checkbox-container">
+            <input type="checkbox"
+                   id="isManager"
+                   formControlName="isManager">
+            <label for="isManager" [class.disabled]="getSelectedStaffLevel() < 3">Manager</label>
+            <button type="button"
+                    (click)="generateRandomPin()"
+                    title="Generate Random PIN"
+                    [disabled]="!pinChangeForm.get('isManager')?.value" style="border:none;"
+                    *ngIf="pinChangeForm.get('isManager')?.value">
+              <div class="refresh-circle">
+                <img src="assets/refresh.svg" alt="refresh" class="refresh-icon" style="margin-top: 7px;">
+              </div>
+            </button>
+          </div>
+        </div>
+        @if (pinChangeForm.get('newPin')?.invalid && pinChangeForm.get('newPin')?.touched) {
+          <div class="error-message">
+            {{ getPinErrorMessage() }}
+          </div>
+        }
+          @else {
+            <div class="error-message"> <!-- Fixed height when no error -->
+            </div>
+            }
+      </div>
+
+      <div class="form-group">
+        <label for="managerPin">Manager PIN Authorisation</label>
+        <input type="password" id="managerPin" formControlName="managerPin" style="height: 15px;width: 60px;" maxlength="5">
+      </div>
+
+      <div class="button-group">
+        <button type="button" (click)="onChangePin()" class="change-pin">
+          <div class="key-icon">
+            <svg viewBox="0 0 24 24">
+              <path d="M12.65 10C11.83 7.67 9.61 6 7 6c-3.31 0-6 2.69-6 6s2.69 6 6 6c2.61 0 4.83-1.67 5.65-4H17v4h4v-4h2v-4H12.65zM7 14c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z"/>
+            </svg>
+          </div>
+          Change PIN
+        </button>
+        <button type="button" (click)="onQuit()" class="quit">
+          <div class="quit-icon">
+            <svg viewBox="0 0 24 24">
+              <path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2" fill="none" />
+            </svg>
+          </div>
+          Quit
+        </button>
+      </div>
+
+      @if (apiMessage) {
+        <div class="api-message" [class.error]="isError" [class.success]="!isError">
+          {{apiMessage}}
+        </div>
+      }
+      @else {
+        <div class="api-message">
+        </div>
+      }
+    </form>
+  </div>
+</div>
+

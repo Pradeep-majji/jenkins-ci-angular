@@ -17,19 +17,19 @@ pipeline {
 
         stage('Build') {
             steps {
-                sh 'npm install'
-                sh 'npm run build'
+                bat 'npm install'
+                bat 'npm run build'
             }
         }
 
         stage('Deploy to Tomcat') {
             steps {
-                sh '''
+                bat '''
                     # Create WAR file
                     jar -cvf app.war -C dist .
 
                     # Deploy to Tomcat using curl
-                    curl -T app.war "http://${TOMCAT_USERNAME}:${TOMCAT_PASSWORD}@localhost:8085/manager/text/deploy?path=/app&update=true"
+                    curl -T app.war "http://%TOMCAT_USERNAME%:%TOMCAT_PASSWORD%@localhost:8085/manager/text/deploy?path=/app&update=true"
                 '''
             }
         }
